@@ -1,0 +1,15 @@
+const {
+    post<%-modelName%>s,
+    delete<%-modelName%>s,
+    update<%-modelName%>s,
+    get<%-modelName%>s,
+} = require('./controllers');
+
+const router = require('express').Router();
+
+router.get('/', get<%-modelName%>);
+router.post('/', post<%-modelName%>);
+router.put('/:id', update<%-modelName%>);
+router.delete('/:id', delete<%-modelName%>);
+
+module.exports = router;
