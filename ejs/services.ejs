@@ -1,0 +1,22 @@
+// Models
+const <%-modelName%> = require('../../models/<%-modelName%>');
+
+exports.fetch<%-modelName%>ById = function (id) {
+    return <%-modelName%>.findById(id).select('-password');
+};
+
+exports.is<%-modelName%>Exists = function (id) {
+    return <%-modelName%>.exists({ _id: id });
+};
+
+exports.create<%-modelName%> = function (payload) {
+    return <%-modelName%>.create(payload);
+};
+
+exports.update<%-modelName%> = function (id,update) {
+    return <%-modelName%>.findByIdAndUpdate(id, update);
+}
+
+exports.update<%-modelName%> = function (id) {
+    return <%-modelName%>.findByIdAndDelete(id);
+}

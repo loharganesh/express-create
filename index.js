@@ -1,5 +1,22 @@
 #! /usr/bin/env node
 
+// Folder Structure
+
+/*
+
+    root
+      |-- models
+            |-- Model.js
+      |-- routes
+            |-- routename
+                    |-- controllers.js
+                    |-- index.js
+                    |-- services.js
+            |-- index.js
+      |-- app.js
+
+*/
+
 const fs = require('fs');
 const inquirer = require('inquirer');
 const ejs = require('ejs');
@@ -33,14 +50,17 @@ function main() {
         ])
         .then((answers) => {
             const { endpoint } = answers;
-            const modelName = makeInitialUppercase(endpoint);
+            const MODEL = makeInitialUppercase(endpoint);
+            const FOLDER = endpoint.toLowerCase();
 
             // Routes
             const routeTemplate = fs.readFileSync(
                 `${__dirname}/ejs/route.ejs`,
                 'utf-8'
             );
-            const renderedRoute = ejs.render(routeTemplate, { modelName });
+            const renderedRoute = ejs.render(routeTemplate, {
+                modelName: MODEL,
+            });
 
             // Controllers
             const controllerTemplate = fs.readFileSync(
@@ -48,7 +68,7 @@ function main() {
                 'utf-8'
             );
             const renderedController = ejs.render(controllerTemplate, {
-                modelName,
+                modelName: MODEL,
             });
 
             // Model
@@ -57,16 +77,26 @@ function main() {
                 'utf-8'
             );
             const renderedModel = ejs.render(modelTemplate, {
-                modelName,
+                modelName: MODEL,
             });
 
-            generate(`${DIR_ROUTES}/${endpoint}`, 'index', renderedRoute);
-            generate(`${DIR_MODELS}`, `${endpoint}`, renderedModel);
+            // Services
+            const servicesTemplate = fs.readFileSync(
+                `${__dirname}/ejs/services.ejs`,
+                'utf-8'
+            );
+            const renderedServices = ejs.render(servicesTemplate, {
+                modelName: MODEL,
+            });
+
+            generate(`${DIR_ROUTES}/${FOLDER}`, 'index', renderedRoute);
+            generate(`${DIR_MODELS}`, `${MODEL}`, renderedModel);
             generate(
-                `${DIR_ROUTES}/${endpoint}`,
+                `${DIR_ROUTES}/${FOLDER}`,
                 `controllers`,
                 renderedController
             );
+            generate(`${DIR_ROUTES}/${FOLDER}`, `services`, renderedServices);
         });
 }
 
